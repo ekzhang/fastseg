@@ -8,11 +8,11 @@ The architecture used is an implementation of MobileNetV3 with a modified segmen
 
 ## Requirements
 
-This code is tested with PyTorch version 1.5 and requires the `geffnet` package, as described in `requirements.txt`. To install, run `pip install -r requirements.txt` in your Python environment. 
+This code requires Python 3.7 or later. It is tested with PyTorch version 1.5 and requires the `geffnet` package, as described in `requirements.txt`. To install, run `pip install -r requirements.txt` in your Python environment.
 
 ## Running Inference
 
-TODO
+Currently you can test inference of a dummy untrained model by running `python -m fastseg.infer` in the project root.
 
 ## Training from Scratch
 
