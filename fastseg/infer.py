@@ -2,25 +2,21 @@
 
 import torch
 import torch.nn as nn
-from geffnet.mobilenetv3 import tf_mobilenetv3_large_100
+from PIL import Image
 
 from .model.lraspp import MobileV3Large
-from .model.mobilenetv3 import MobileNetV3_Large
+from .image.colorize import colorize_mask, blend
 
-net = MobileV3Large(19, None).cuda().eval()
-# net = MobileNetV3_Large().cuda().eval()
-# net = tf_mobilenetv3_large_100(drop_rate=0.2, norm_layer=nn.BatchNorm2d).cuda().eval()
-# net = torch.hub.load('pytorch/vision:v0.6.0', 'mobilenet_v2', pretrained=True).cuda().eval()
+ckpt_path = 'c:/Users/ericzhang/Downloads/best_checkpoint_ep161.pth'
+net = MobileV3Large.from_pretrained(ckpt_path).cuda().eval()
 
-data = torch.rand((20, 3, 1024, 2048)).cuda()
+im_path = 'c:/Users/ericzhang/Downloads/cityscapes/leftImg8bit/val/frankfurt/frankfurt_000001_030669_leftImg8bit.png'
+img = Image.open(im_path)
 
-with torch.no_grad():
-    for x in data:
-        start = torch.cuda.Event(enable_timing=True)
-        end = torch.cuda.Event(enable_timing=True)
-        start.record()
-        out = net(x.unsqueeze(0))
-        end.record()
-        torch.cuda.synchronize()
-        print(f'{start.elapsed_time(end) / 1000.0:.3f}')
-        print(out.shape)
+seg = net.predict_one(img)
+
+colorized = colorize_mask(seg)
+colorized.show()
+
+composited = blend(img, colorized)
+composited.show()

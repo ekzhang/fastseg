@@ -3,10 +3,8 @@ import torch.nn as nn
 from .efficientnet import EfficientNet_B4, EfficientNet_B0
 from .mobilenetv3 import MobileNetV3_Large, MobileNetV3_Small
 
-
 def get_trunk(trunk_name):
     """Retrieve the pretrained network trunk and channel counts"""
-
     if trunk_name == 'efficientnet_b4':
         backbone = EfficientNet_B4(pretrained=True)
         s2_ch = 24
@@ -29,9 +27,7 @@ def get_trunk(trunk_name):
         high_level_ch = 1024
     else:
         raise ValueError('unknown backbone {}'.format(trunk_name))
-
     return backbone, s2_ch, s4_ch, high_level_ch
-
 
 class ConvBnRelu(nn.Module):
     """Convenience layer combining a Conv2d, BatchNorm2d, and a ReLU activation.

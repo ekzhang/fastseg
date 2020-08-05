@@ -9,20 +9,19 @@ import torch.nn as nn
 import torch.nn.functional as F
 
 from .utils import get_trunk, ConvBnRelu
+from .base import BaseSegmentation
 
-class LRASPP(nn.Module):
-    """Lite R-ASPP Segmentation Network"""
+class LRASPP(BaseSegmentation):
+    """Lite R-ASPP style segmentation network"""
     def __init__(self,
                  num_classes,
                  trunk='mobilenetv3_large',
-                 criterion=None,
                  hidden_ch=128,
                  bottleneck_ch=256):
         super(LRASPP, self).__init__()
 
-        self.criterion = criterion
         self.trunk, s2_ch, s4_ch, high_level_ch = get_trunk(trunk_name=trunk)
-        
+
         # Reduced atrous spatial pyramid pooling
         self.aspp_conv1 = nn.Sequential(
             nn.Conv2d(high_level_ch, hidden_ch, 1, bias=False),
@@ -78,9 +77,18 @@ class LRASPP(nn.Module):
         return y
 
 
-def MobileV3Large(num_classes, criterion):
-    return LRASPP(num_classes, criterion=criterion, trunk='mobilenetv3_large')
+class MobileV3Large(LRASPP):
+    def __init__(self, num_classes):
+        super(MobileV3Large, self).__init__(
+            num_classes,
+            trunk='mobilenetv3_large'
+        )
 
 
-def MobileV3Small(num_classes, criterion):
-    return LRASPP(num_classes, criterion=criterion, trunk='mobilenetv3_small', bottleneck_ch=128)
+class MobileV3Small(LRASPP):
+    def __init__(self, num_classes):
+        super(MobileV3Small, self).__init__(
+            num_classes,
+            trunk='mobilenetv3_small',
+            bottleneck_ch=128
+        )
