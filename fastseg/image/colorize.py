@@ -8,7 +8,7 @@ from PIL import Image
 
 from .palette import all_palettes
 
-def colorize_mask(mask_array, palette='cityscapes'):
+def colorize(mask_array, palette='cityscapes'):
     """Colorize a segmentation mask.
 
     Keyword arguments:
