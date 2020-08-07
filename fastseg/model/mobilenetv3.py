@@ -13,9 +13,7 @@ class MobileNetV3_Large(nn.Module):
                     drop_rate=0.2,
                     norm_layer=nn.BatchNorm2d)
 
-        self.early = nn.Sequential(net.conv_stem,
-                                   net.bn1,
-                                   net.act1)
+        self.early = nn.Sequential(net.conv_stem, net.bn1, net.act1)
 
         net.blocks[3][0].conv_dw.stride = (1, 1)
         net.blocks[5][0].conv_dw.stride = (1, 1)
@@ -44,8 +42,6 @@ class MobileNetV3_Large(nn.Module):
         self.block4 = net.blocks[4]
         self.block5 = net.blocks[5]
         self.block6 = net.blocks[6]
-        self.late = nn.Sequential(net.conv_head,
-                                  net.act2)
 
     def forward(self, x):
         x = self.early(x) # 2x
@@ -58,7 +54,6 @@ class MobileNetV3_Large(nn.Module):
         x = self.block4(x)
         x = self.block5(x)
         x = self.block6(x)
-        x = self.late(x)
         return s2, s4, x
 
 
@@ -69,12 +64,10 @@ class MobileNetV3_Small(nn.Module):
                     drop_rate=0.2,
                     norm_layer=nn.BatchNorm2d)
 
-        self.early = nn.Sequential(net.conv_stem,
-                                   net.bn1,
-                                   net.act1)
+        self.early = nn.Sequential(net.conv_stem, net.bn1, net.act1)
 
-        net.blocks[0][0].conv_dw.stride = (1, 1)
         net.blocks[2][0].conv_dw.stride = (1, 1)
+        net.blocks[4][0].conv_dw.stride = (1, 1)
 
         for block_num in (2, 3, 4, 5):
             for sub_block in range(len(net.blocks[block_num])):
@@ -99,20 +92,17 @@ class MobileNetV3_Small(nn.Module):
         self.block3 = net.blocks[3]
         self.block4 = net.blocks[4]
         self.block5 = net.blocks[5]
-        self.late = nn.Sequential(net.conv_head,
-                                  net.act2)
 
     def forward(self, x):
         x = self.early(x) # 2x
-        x = self.block0(x)
         s2 = x
-        x = self.block1(x) # 4x
+        x = self.block0(x) # 4x
+        s4 = x
+        x = self.block1(x) # 8x
         x = self.block2(x)
         x = self.block3(x)
-        s4 = x
-        x = self.block4(x) # 8x
+        x = self.block4(x)
         x = self.block5(x)
-        x = self.late(x)
         return s2, s4, x
 
 

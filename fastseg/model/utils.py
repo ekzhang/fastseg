@@ -19,12 +19,12 @@ def get_trunk(trunk_name):
         backbone = MobileNetV3_Large(pretrained=True)
         s2_ch = 16
         s4_ch = 24
-        high_level_ch = 1280
+        high_level_ch = 960
     elif trunk_name == 'mobilenetv3_small':
         backbone = MobileNetV3_Small(pretrained=True)
         s2_ch = 16
-        s4_ch = 48
-        high_level_ch = 1024
+        s4_ch = 16
+        high_level_ch = 576
     else:
         raise ValueError('unknown backbone {}'.format(trunk_name))
     return backbone, s2_ch, s4_ch, high_level_ch
