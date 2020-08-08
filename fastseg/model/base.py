@@ -8,10 +8,14 @@ class BaseSegmentation(nn.Module):
     """Module subclass providing useful convenience functions for inference."""
 
     @classmethod
-    def from_pretrained(cls, filename):
+    def from_pretrained(cls, filename=None, **kwargs):
         """Load a pretrained model from a .pth checkpoint given by `filename`."""
-        checkpoint = torch.load(filename)
-        net = cls(checkpoint['num_classes'])
+        if filename is None:
+            # Pull default pretrained model from internet
+            raise NotImplementedError('default models not published yet, please specify a checkpoint')
+        else:
+            checkpoint = torch.load(filename)
+        net = cls(checkpoint['num_classes'], **kwargs)
         net.load_checkpoint(checkpoint)
         return net
 
@@ -45,7 +49,7 @@ class BaseSegmentation(nn.Module):
         if `return_prob == False`, a NumPy array of shape (len(images), height, width)
             containing the predicted classes
         if `return_prob == True`, a NumPy array of shape (len(images), num_classes, height, width)
-            containing the probabilities of each class
+            containing the log-probabilities of each class
         """
         # Determine the device
         if device is None:

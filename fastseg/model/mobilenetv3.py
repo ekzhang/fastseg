@@ -4,13 +4,12 @@ import torch
 import torch.nn as nn
 
 from geffnet import tf_mobilenetv3_large_100, tf_mobilenetv3_small_100
-from geffnet.efficientnet_builder import InvertedResidual
+from geffnet.efficientnet_builder import InvertedResidual, Conv2dSame, Conv2dSameExport
 
 class MobileNetV3_Large(nn.Module):
     def __init__(self, trunk=tf_mobilenetv3_large_100, pretrained=False):
         super(MobileNetV3_Large, self).__init__()
         net = trunk(pretrained=pretrained,
-                    drop_rate=0.2,
                     norm_layer=nn.BatchNorm2d)
 
         self.early = nn.Sequential(net.conv_stem, net.bn1, net.act1)
@@ -31,9 +30,11 @@ class MobileNetV3_Large(nn.Module):
                 else:
                     m.dilation = (4, 4)
                     pad = 4
+                # Adjust padding if necessary, but NOT for "same" layers
                 assert m.kernel_size[0] == m.kernel_size[1]
-                pad *= (m.kernel_size[0] - 1) // 2
-                m.padding = (pad, pad)
+                if not isinstance(m, Conv2dSame) and not isinstance(m, Conv2dSameExport):
+                    pad *= (m.kernel_size[0] - 1) // 2
+                    m.padding = (pad, pad)
 
         self.block0 = net.blocks[0]
         self.block1 = net.blocks[1]
@@ -61,7 +62,6 @@ class MobileNetV3_Small(nn.Module):
     def __init__(self, trunk=tf_mobilenetv3_small_100, pretrained=False):
         super(MobileNetV3_Small, self).__init__()
         net = trunk(pretrained=pretrained,
-                    drop_rate=0.2,
                     norm_layer=nn.BatchNorm2d)
 
         self.early = nn.Sequential(net.conv_stem, net.bn1, net.act1)

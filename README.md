@@ -4,34 +4,70 @@ This respository aims to provide accurate real-time semantic segmentation code f
 
 ![Example image segmentation](https://i.imgur.com/WspmlwN.jpg)
 
-The models are implementations of MobileNetV3 (both large and small variants) with a modified segmentation head based on LR-ASPP. The top model was able to achieve 71.4% mIOU on Cityscapes _val_, while running at 60 FPS on a GPU. Please see below for detailed benchmarks.
+The models are implementations of MobileNetV3 (both large and small variants) with a modified segmentation head based on LR-ASPP. The top model was able to achieve 71.4% mIOU on Cityscapes _val_, while running at up to 60 FPS on a GPU. Please see below for detailed benchmarks.
+
+Currently, you can do the following:
+
+- Load pretrained MobileNetV3 semantic segmentation models.
+- Easily generate hard segmentation labels or soft probabilities for street image scenes.
+- Evaluate MobileNetV3 models on Cityscapes or your own dataset.
+- Export models for production with ONNX.
+
+If you have any feature requests or questions, feel free to leave them as GitHub issues!
+
+## What's New?
+
+### August X, 2020
+
+- Initial release
 
 ## Requirements
 
-This code requires Python 3.7 or later. It is tested with PyTorch version 1.5 and above. To install the package, simply run `pip install fastseg`. You will then be able to import and load the pretrained model:
+This code requires Python 3.7 or later. It is tested with PyTorch version 1.5 and above. To install the package, simply run `pip install fastseg`. You can then load the pretrained model:
 
 ```python
+# Load a pretrained MobileNetV3 segmentation model in inference mode
 from fastseg import MobileV3Large
-model = MobileV3Large.from_pretrained('path_to_checkpoint.pth')
+model = MobileV3Large.from_pretrained('path_to_checkpoint.pth').cuda()
 model.eval()
+
+# Open a local image as input
+from PIL import Image
+image = Image.open('street_image.png')
+
+# Predict numeric labels [0-18] for each pixel in the image
+labels = model.predict_one(image)
+
+# Display a color-coded output
+from fastseg.image import colorize, blend
+colorized = colorize(labels)
+colorized.show()
+composited = blend(image, colorized)
+composited.show()
 ```
 
 More detailed examples are given below. Alternatively, to use the code from source, clone this repository and install the `geffnet` package (along with additional dependencies) by running `pip install -r requirements.txt` in the project root.
 
 ## Pretrained Models and Metrics
 
-I was able to train a few of the models close to or exceeding the accuracy described in the original [Searching for MobileNetV3](https://arxiv.org/abs/1905.02244) paper.
+I was able to train a few models close to or exceeding the accuracy described in the original [Searching for MobileNetV3](https://arxiv.org/abs/1905.02244) paper. Each was trained only on the _fine_ labels from Cityscapes for around 12 hours on an Nvidia DGX-1 node, with 8 V100 GPUs.
 
-| Model | Num Parameters | mIOU on Cityscapes _val_ | Inference Time |
-| ----- | -------------- | ------------------------ | -------------- |
-| MobileV3Large | 4.2M | 69.0% | xxx FPS |
-| MobileV3Small | xxx | xxx% | xxx FPS |
+| Model         | Segmentation Head               | Parameters | mIOU  | Inference | Pretrained |
+| ------------- | ------------------------------- | ---------- | ----- | --------- | :--------: |
+| MobileV3Large | "Late" ASPP, 5x5 Up-Conv, F=128 | 7.0M       | 71.4% | 16.8 FPS  |            |
+| MobileV3Large | ASPP, 3x3 Up-Conv, F=128        | 4.2M       | 69.0% | 21.6 FPS  |     ✔      |
+| MobileV3Large | LR-ASPP, 1x1 Up-Conv, F=128     | 3.3M       | xxx%  | 25.7 FPS  |            |
+| MobileV3Large | LR-ASPP, 1x1 Up-Conv, F=256     | 3.7M       | xxx%  | xxx FPS   |            |
 
-Inference was done on a single Nvidia V100 GPU with 16-bit floating point precision, testing on full-resolution 2MP images (1024 x 2048) from Cityscapes as input. The inference time is much lower for half-resolution images.
+Reported mIOU is on the Cityscapes _val_ set. Inference was done on a single Nvidia V100 GPU with 16-bit floating point precision, tested on full-resolution 2MP images (1024 x 2048) from Cityscapes as input. The inference time is much lower for half-resolution images.
+
+TODO: Get inference times with TensorRT/ONNX. I expect these to be significantly faster.
 
 ## Example: Running Inference
 
-Currently you can test inference of a dummy model by running `python -m fastseg.infer` in the project root.
+Currently you can test inference of a dummy model by running `python infer.py` in the project root.
+
+TODO actual code and "Open in Colab" button, after this gets added to PyPI.
 
 ## Example: Exporting to ONNX
 
