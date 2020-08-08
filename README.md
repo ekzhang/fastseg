@@ -12,7 +12,7 @@ Currently, you can do the following:
 
 - Load pretrained MobileNetV3 semantic segmentation models.
 - Easily generate hard segmentation labels or soft probabilities for street image scenes.
-- Evaluate MobileNetV3 models on Cityscapes or your own dataset.
+- Evaluate MobileNetV3 models on Cityscapes, or your own dataset.
 - Export models for production with ONNX.
 
 If you have any feature requests or questions, feel free to leave them as GitHub issues!
@@ -22,6 +22,19 @@ If you have any feature requests or questions, feel free to leave them as GitHub
 ### August X, 2020
 
 - Initial release
+
+## About MobileNetV3
+
+Here's an excerpt from the abstract of the [original paper](https://arxiv.org/abs/1905.02244):
+
+> This paper starts the exploration of how automated search algorithms and network design can work together to harness complementary approaches improving the overall state of the art. Through this process we create two new MobileNet models for release: MobileNetV3-Large and MobileNetV3-Small, which are targeted for high and low resource use cases. These models are then adapted and applied to the tasks of object detection and semantic segmentation.
+>
+> For the task of semantic segmentation (or any dense pixel prediction), we propose a new efficient segmentation decoder Lite Reduced Atrous Spatial Pyramid Pooling (LR-ASPP).
+>
+> **MobileNetV3-Large LRASPP is 34% faster than MobileNetV2 R-ASPP at similar
+accuracy for Cityscapes segmentation.**
+
+![MobileNetV3 Comparison](https://i.imgur.com/tGemvpc.png)
 
 ## Requirements
 
@@ -80,6 +93,6 @@ TODO
 
 ## Contributions
 
-Pull requests are always welcome! Thanks to Andrew Tao and Karan Sapra from [NVIDIA ADLR](https://nv-adlr.github.io/) for many helpful discussions, as well as Branislav Kisacanin, without whom this wouldn't be possible.
+Pull requests are always welcome! A big thanks to Andrew Tao and Karan Sapra from [NVIDIA ADLR](https://nv-adlr.github.io/) for many helpful discussions, as well as Branislav Kisacanin, without whom this wouldn't be possible.
 
 Licensed under the MIT License.
