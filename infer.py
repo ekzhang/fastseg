@@ -9,7 +9,7 @@ from fastseg.image import colorize, blend
 
 torch.backends.cudnn.benchmark = True
 
-ckpt_path = 'c:/Users/ericzhang/Downloads/last_checkpoint_ep104.pth'
+ckpt_path = 'c:/Users/ericzhang/Downloads/best_checkpoint_ep248.pth'
 net = MobileV3Large.from_pretrained(ckpt_path).cuda().eval()
 
 im_path = 'c:/Users/ericzhang/Downloads/cityscapes/leftImg8bit/val/frankfurt/frankfurt_000001_030669_leftImg8bit.png'

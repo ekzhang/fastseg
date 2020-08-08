@@ -21,7 +21,6 @@ ipt = torch.stack([tfms(img)]).numpy()
 
 sess = onnxruntime.InferenceSession('mobilenetv3.onnx')
 
-print(sess.get_inputs()[0].name)
 out_ort = sess.run(None, {
     'input0': ipt,
 })
