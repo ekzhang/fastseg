@@ -19,7 +19,7 @@ If you have any feature requests or questions, feel free to leave them as GitHub
 
   * [What's New?](#whats-new)
     + [August X, 2020](#august-x-2020)
-  * [About MobileNetV3](#about-mobilenetv3)
+  * [Overview](#overview)
   * [Requirements](#requirements)
   * [Pretrained Models and Metrics](#pretrained-models-and-metrics)
   * [Usage](#usage)
@@ -34,22 +34,24 @@ If you have any feature requests or questions, feel free to leave them as GitHub
 
 - Initial release
 
-## About MobileNetV3
+## Overview
 
-Here's an excerpt from the abstract of the [original paper](https://arxiv.org/abs/1905.02244):
+Here's an excerpt from the [original paper](https://arxiv.org/abs/1905.02244) introducing MobileNetV3:
 
 > This paper starts the exploration of how automated search algorithms and network design can work together to harness complementary approaches improving the overall state of the art. Through this process we create two new MobileNet models for release: MobileNetV3-Large and MobileNetV3-Small, which are targeted for high and low resource use cases. These models are then adapted and applied to the tasks of object detection and semantic segmentation.
 >
-> For the task of semantic segmentation (or any dense pixel prediction), we propose a new efficient segmentation decoder Lite Reduced Atrous Spatial Pyramid Pooling (LR-ASPP).
+> For the task of semantic segmentation (or any dense pixel prediction), we propose a new efficient segmentation decoder Lite Reduced Atrous Spatial Pyramid Pooling (LR-ASPP). **We achieve new state of the art results for mobile classification, detection and segmentation.**
 >
 > **MobileNetV3-Large LRASPP is 34% faster than MobileNetV2 R-ASPP at similar
 accuracy for Cityscapes segmentation.**
 >
 > ![MobileNetV3 Comparison](https://i.imgur.com/E9IYp0c.png?1)
 
+This project tries to faithfully implement MobileNetV3 for real-time semantic segmentation, with the aims of being efficient, easy to use, and extendable.
+
 ## Requirements
 
-This code requires Python 3.7 or later. It is tested with PyTorch version 1.5 or above. To install the package, simply run `pip install fastseg`. You can then load the pretrained model:
+This code requires Python 3.7 or later. It is tested with PyTorch version 1.5 and above. To install the package, simply run `pip install fastseg`. Then you can get started with a pretrained model:
 
 ```python
 # Load a pretrained MobileNetV3 segmentation model in inference mode
@@ -61,18 +63,11 @@ model.eval()
 from PIL import Image
 image = Image.open('street_image.png')
 
-# Preprocess the image and predict numeric labels [0-18] for each pixel
+# Predict numeric labels [0-18] for each pixel of the image
 labels = model.predict_one(image)
-
-# Display a color-coded output
-from fastseg.image import colorize, blend
-colorized = colorize(labels)
-colorized.show()
-composited = blend(image, colorized)
-composited.show()
 ```
 
-More detailed examples are given below. Alternatively, to use the code from source, clone this repository and install the `geffnet` package (along with additional dependencies) by running `pip install -r requirements.txt` in the project root.
+More detailed examples are given below. As an alternative, instead of installing `fastseg` from pip, you can clone this repository and install the `geffnet` package (along with other dependencies) by running `pip install -r requirements.txt` in the project root.
 
 ## Pretrained Models and Metrics
 
@@ -84,7 +79,7 @@ I was able to train a few models close to or exceeding the accuracy described in
 | `MobileV3Large` | LR-ASPP, F=128    | 3.2M       | 68.1% | 25.7 FPS  |          |
 | `MobileV3Small` | LR-ASPP, F=256    | 1.4M       | 63.4% | 30.3 FPS  |    ✔     |
 
-For comparison, the original paper reports 72.6% mIOU and 3.6M parameters on the Cityscapes _val_ set. Inference was done on a single Nvidia V100 GPU with 16-bit floating point precision, tested on full-resolution 2MP images (1024 x 2048) from Cityscapes as input. It is much faster for half-resolution (512 x 1024) images.
+For comparison, the original paper reports 72.6% mIOU and 3.6M parameters on the Cityscapes _val_ set. Inference was done on a single Nvidia V100 GPU with 16-bit floating point precision, tested on full-resolution 2MP images (1024 x 2048) from Cityscapes as input. It is much faster with half-resolution (512 x 1024) images.
 
 TODO: Get inference times with TensorRT/ONNX. I expect these to be significantly faster.
 
@@ -130,7 +125,9 @@ model = MobileV3Large(
 )
 ```
 
-You can run raw inference in your own pipeline with `model.forward()`, like any other PyTorch model. However, we also provide convenience functions `model.predict_one()` and `model.predict()`, which run preprocessing and normalization on PIL images directly and return labels.
+To run inference on an image or batch of images, you can use the methods `model.predict_one()` and `model.predict()`, respectively. These methods take care of the preprocessing and output interpretation for you; they take PIL Images or NumPy arrays as input and return a NumPy array.
+
+(You can also run inference directly with `model.forward()`, which will return a tensor containing logits, but be sure to normalize the inputs to have mean 0 and variance 1.)
 
 ```python
 import torch
