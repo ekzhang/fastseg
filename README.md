@@ -5,7 +5,6 @@ This respository aims to provide accurate _real-time semantic segmentation_ code
 ```python
 from fastseg import MobileV3Large
 model = MobileV3Large.from_pretrained().cuda().eval()
-
 model.predict(images)
 ```
 
@@ -221,5 +220,7 @@ Coming soon!
 ## Contributions
 
 Pull requests are always welcome! A big thanks to Andrew Tao and Karan Sapra from [NVIDIA ADLR](https://nv-adlr.github.io/) for helpful discussions and for lending me their training code, as well as Branislav Kisacanin, without whom this wouldn't be possible.
+
+Improved by advice from: Ching Hung, Eric Viscito, Franklyn Wang, Jagadeesh Sankaran, and Zoran Nikolic.
 
 Licensed under the MIT License.
