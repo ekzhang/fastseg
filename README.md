@@ -4,8 +4,6 @@ This respository aims to provide accurate _real-time semantic segmentation_ code
 
 ![Example image segmentation](https://i.imgur.com/WspmlwN.jpg)
 
-
-
 The models are implementations of **MobileNetV3** (both large and small variants) with a modified segmentation head based on **LR-ASPP**. The top model was able to achieve **71.4%** mIOU on Cityscapes _val_, while running at up to **60 FPS** on a GPU. Please see below for detailed benchmarks.
 
 Currently, you can do the following:
@@ -33,8 +31,8 @@ Here's an excerpt from the abstract of the [original paper](https://arxiv.org/ab
 >
 > **MobileNetV3-Large LRASPP is 34% faster than MobileNetV2 R-ASPP at similar
 accuracy for Cityscapes segmentation.**
-
-![MobileNetV3 Comparison](https://i.imgur.com/tGemvpc.png)
+>
+> ![MobileNetV3 Comparison](https://i.imgur.com/E9IYp0c.png?1)
 
 ## Requirements
 
@@ -67,11 +65,11 @@ More detailed examples are given below. Alternatively, to use the code from sour
 
 I was able to train a few models close to or exceeding the accuracy described in the original [Searching for MobileNetV3](https://arxiv.org/abs/1905.02244) paper. Each was trained only on the `gtFine` labels from Cityscapes for around 12 hours on an Nvidia DGX-1 node, with 8 V100 GPUs.
 
-| Model           | Segmentation Head | Parameters | mIOU  | Inference | Pretrained? |
-| --------------- | ----------------- | ---------- | ----- | --------- | :---------: |
-| `MobileV3Large` | LR-ASPP, F=256    | 3.6M       | 71.4% | 21.1 FPS  |      ✔      |
-| `MobileV3Large` | LR-ASPP, F=128    | 3.2M       | 68.1% | 25.7 FPS  |             |
-| `MobileV3Small` | LR-ASPP, F=256    | 1.4M       | 63.4% | 30.3 FPS  |      ✔      |
+| Model           | Segmentation Head | Parameters | mIOU  | Inference | Weights? |
+| --------------- | ----------------- | ---------- | ----- | --------- | :------: |
+| `MobileV3Large` | LR-ASPP, F=256    | 3.6M       | 71.4% | 21.1 FPS  |    ✔     |
+| `MobileV3Large` | LR-ASPP, F=128    | 3.2M       | 68.1% | 25.7 FPS  |          |
+| `MobileV3Small` | LR-ASPP, F=256    | 1.4M       | 63.4% | 30.3 FPS  |    ✔     |
 
 For comparison, the original paper reports 72.6% mIOU and 3.6M parameters on the Cityscapes _val_ set. Inference was done on a single Nvidia V100 GPU with 16-bit floating point precision, tested on full-resolution 2MP images (1024 x 2048) from Cityscapes as input. It is much faster for half-resolution (512 x 1024) images.
 
@@ -159,14 +157,37 @@ TODO "Open in Colab" button & notebook.
 
 ## Example: Exporting to ONNX
 
-TODO
+The script `onnx_export.py` can be used to convert a pretrained segmentation model to ONNX. You should specify the image input dimensions when exporting. See the usage instructions below:
+
+```
+$ python onnx_export.py --help
+usage: onnx_export.py [-h] [--model MODEL] [--size SIZE]
+                      [--checkpoint CHECKPOINT]
+                      OUTPUT_FILENAME
+
+Command line script to export a pretrained segmentation model to ONNX.
+
+positional arguments:
+  OUTPUT_FILENAME       filename of output model (e.g.,
+                        mobilenetv3_large.onnx)
+
+optional arguments:
+  -h, --help            show this help message and exit
+  --model MODEL, -m MODEL
+                        the model to export (default MobileV3Large)
+  --size SIZE, -s SIZE  the image dimensions to set as input (default
+                        1024,2048)
+  --checkpoint CHECKPOINT, -c CHECKPOINT
+                        filename of the weights checkpoint .pth file (uses
+                        pretrained by default)
+```
 
 ## Training from Scratch
 
-TODO
+Coming soon!
 
 ## Contributions
 
-Pull requests are always welcome! A big thanks to Andrew Tao and Karan Sapra from [NVIDIA ADLR](https://nv-adlr.github.io/) for many helpful discussions, as well as Branislav Kisacanin, without whom this wouldn't be possible.
+Pull requests are always welcome! A big thanks to Andrew Tao and Karan Sapra from [NVIDIA ADLR](https://nv-adlr.github.io/) for helpful discussions and for lending me their training code, as well as Branislav Kisacanin, without whom this wouldn't be possible.
 
 Licensed under the MIT License.
