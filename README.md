@@ -67,11 +67,11 @@ More detailed examples are given below. Alternatively, to use the code from sour
 
 I was able to train a few models close to or exceeding the accuracy described in the original [Searching for MobileNetV3](https://arxiv.org/abs/1905.02244) paper. Each was trained only on the `gtFine` labels from Cityscapes for around 12 hours on an Nvidia DGX-1 node, with 8 V100 GPUs.
 
-| Model           | Segmentation Head           | Parameters | mIOU  | Inference | Pretrained? |
-| --------------- | --------------------------- | ---------- | ----- | --------- | :---------: |
-| `MobileV3Large` | LR-ASPP, 1x1 Up-Conv, F=256 | 3.6M       | 71.4% | 21.1 FPS  |      ✔      |
-| `MobileV3Large` | LR-ASPP, 1x1 Up-Conv, F=128 | 3.2M       | 68.1% | 25.7 FPS  |             |
-| `MobileV3Small` | LR-ASPP, 1x1 Up-Conv, F=256 | 1.4M       | 63.4% | 30.3 FPS  |      ✔      |
+| Model           | Segmentation Head | Parameters | mIOU  | Inference | Pretrained? |
+| --------------- | ----------------- | ---------- | ----- | --------- | :---------: |
+| `MobileV3Large` | LR-ASPP, F=256    | 3.6M       | 71.4% | 21.1 FPS  |      ✔      |
+| `MobileV3Large` | LR-ASPP, F=128    | 3.2M       | 68.1% | 25.7 FPS  |             |
+| `MobileV3Small` | LR-ASPP, F=256    | 1.4M       | 63.4% | 30.3 FPS  |      ✔      |
 
 For comparison, the original paper reports 72.6% mIOU and 3.6M parameters on the Cityscapes _val_ set. Inference was done on a single Nvidia V100 GPU with 16-bit floating point precision, tested on full-resolution 2MP images (1024 x 2048) from Cityscapes as input. It is much faster for half-resolution (512 x 1024) images.
 
@@ -79,9 +79,83 @@ TODO: Get inference times with TensorRT/ONNX. I expect these to be significantly
 
 ## Example: Running Inference
 
-Currently you can test inference of a dummy model by running `python infer.py` in the project root.
+The easiest way to get started with inference is to clone this repository and use the `infer.py` script. For example, if you have street images named `city_1.png` and `city_2.png`, then you can easily generate segmentation labels with the command:
 
-TODO actual code and "Open in Colab" button, after this gets added to PyPI.
+```shell
+$ python infer.py city_1.png city_2.png
+```
+
+Output:
+```
+==> Creating PyTorch MobileV3Large model
+==> Loading images and running inference
+Loading city_1.png
+Generated colorized_city_1.png
+Generated composited_city_2.png
+```
+
+To interact with the code programmatically, first install the `fastseg` package with pip, as described above. Then, you can import and construct the models in your own Python code, which are normal PyTorch instances of `nn.Module`.
+
+```python
+from fastseg import MobileV3Large, MobileV3Small
+
+# Construct a new model with pretrained weights
+model = MobileV3Large.from_pretrained()
+
+# Construct a new model from a local .pth checkpoint
+model = MobileV3Small.from_pretrained('path_to_weights.pth')
+
+# Construct a custom model with random initialization
+model = MobileV3Large(
+    num_classes=19,
+    trunk='mobilenetv3_large',
+    use_aspp=False,
+    hidden_ch=256,
+)
+```
+
+You can run raw inference in your own pipeline with `model.forward()`, like any other PyTorch model. However, we also provide convenience functions `model.predict_one()` and `model.predict()`, which run preprocessing and normalization on a PIL image in addition to inference.
+
+```python
+import torch
+from fastseg import MobileV3Large, MobileV3Small
+
+# Construct a new model with pretrained weights, in evaluation mode
+model = MobileV3Large.from_pretrained().cuda()
+model.eval()
+
+# Run inference directly
+dummy_input = torch.randn(1, 3, 224, 224)
+dummy_output = model(dummy_input)
+assert dummy_output.shape == (1, 19, 224, 224)
+
+# Run inference on an image
+from PIL import Image
+img = Image.open('city_1.png')
+labels = model.predict_one(img)
+assert labels.shape == (224, 224) # returns a NumPy array containing integer labels
+
+# Run inference on a batch of images
+img2 = Image.open('city_2.png')
+batch_labels = model.predict([img, img2])
+assert batch_labels.shape == (2, 224, 224) # returns a NumPy array containing integer labels
+```
+
+We also provide utilities that generate the colorized and composited versions of the label masks as human-interpretable images.
+
+```python
+from fastseg.image import colorize, blend
+
+colorized = colorize(labels) # returns a PIL Image
+colorized.show()
+
+composited = blend(img, colorized) # returns a PIL Image
+composited.show()
+```
+
+You can see an example of this in action by clicking the "Open in Colab" button below.
+
+TODO "Open in Colab" button & notebook.
 
 ## Example: Exporting to ONNX
 

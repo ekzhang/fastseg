@@ -4,6 +4,11 @@ import torch
 import torch.nn as nn
 from torchvision import transforms
 
+MODEL_WEIGHTS_URL = {
+    'mobilev3large-lraspp': 'https://www.dropbox.com/s/fgsv5bknwnn7mdj/mobilev3large-lraspp.pth?dl=1',
+    'mobilev3small-lraspp': 'https://www.dropbox.com/s/rf19yi0svmwu0z5/mobilev3small-lraspp.pth?dl=1',
+}
+
 class BaseSegmentation(nn.Module):
     """Module subclass providing useful convenience functions for inference."""
 
@@ -12,7 +17,12 @@ class BaseSegmentation(nn.Module):
         """Load a pretrained model from a .pth checkpoint given by `filename`."""
         if filename is None:
             # Pull default pretrained model from internet
-            raise NotImplementedError('default models not published yet, please specify a checkpoint')
+            name = cls.model_name
+            if name in MODEL_WEIGHTS_URL:
+                weights_url = MODEL_WEIGHTS_URL[name]
+                checkpoint = torch.hub.load_state_dict_from_url(weights_url)
+            else:
+                raise ValueError(f'pretrained weights not found for model {name}, please specify a checkpoint')
         else:
             checkpoint = torch.load(filename)
         net = cls(checkpoint['num_classes'], **kwargs)

@@ -110,6 +110,8 @@ class LRASPP(BaseSegmentation):
 
 class MobileV3Large(LRASPP):
     """MobileNetV3-Large segmentation network."""
+    model_name = 'mobilev3large-lraspp'
+
     def __init__(self, num_classes, **kwargs):
         super(MobileV3Large, self).__init__(
             num_classes,
@@ -120,6 +122,8 @@ class MobileV3Large(LRASPP):
 
 class MobileV3Small(LRASPP):
     """MobileNetV3-Small segmentation network."""
+    model_name = 'mobilev3small-lraspp'
+
     def __init__(self, num_classes, **kwargs):
         super(MobileV3Small, self).__init__(
             num_classes,
