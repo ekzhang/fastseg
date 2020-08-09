@@ -11,7 +11,7 @@ model.predict(images)
 
 ![Example image segmentation video](https://i.imgur.com/vOApT8N.gif)
 
-The models are implementations of **MobileNetV3** (both large and small variants) with a modified segmentation head based on **LR-ASPP**. The top model was able to achieve **72.3%** mIOU on Cityscapes _val_, while running at up to **60 FPS** on a GPU. Please see below for detailed benchmarks.
+The models are implementations of **MobileNetV3** (both large and small variants) with a modified segmentation head based on **LR-ASPP**. The top model was able to achieve **72.3%** mIOU on Cityscapes _val_, while running at up to **30.7 FPS** on a GPU. Please see below for detailed benchmarks.
 
 Currently, you can do the following:
 
@@ -86,11 +86,11 @@ I was able to train a few models close to or exceeding the accuracy described in
 | --------------- | ----------------- | ---------- | ----- | --------- | -------- | :------: |
 | `MobileV3Large` | LR-ASPP, F=256    | 3.6M       | 72.3% | 21.1 FPS  | 30.7 FPS |    ✔     |
 | `MobileV3Large` | LR-ASPP, F=128    | 3.2M       | 68.1% | 25.7 FPS  | --       |          |
-| `MobileV3Small` | LR-ASPP, F=256    | 1.4M       | 66.5% | 30.3 FPS  | --       |    ✔     |
+| `MobileV3Small` | LR-ASPP, F=256    | 1.4M       | 66.5% | 30.3 FPS  | 39.4 FPS |    ✔     |
 
 For comparison, this is within 0.3% of the original paper, which reports 72.6% mIOU and 3.6M parameters on the Cityscapes _val_ set. Inference was done on an Nvidia V100 GPU, tested on full-resolution 2MP images (1024 x 2048) from Cityscapes as input. It runs much faster on half-resolution (512 x 1024) images.
 
-The "TensorRT" column shows some benchmarks I ran while experimenting with exporting models to [Nvidia TensorRT](https://developer.nvidia.com/tensorrt). You might be able to get faster inference if you're knowledgeable about this.
+The "TensorRT" column shows some benchmarks I ran while experimenting with exporting optimized ONNX models to [Nvidia TensorRT](https://developer.nvidia.com/tensorrt). You might be able to get additional speedups if you're knowledgeable about this.
 
 ## Usage
 
