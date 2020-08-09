@@ -131,27 +131,28 @@ You can run raw inference in your own pipeline with `model.forward()`, like any 
 
 ```python
 import torch
+from PIL import Image
 from fastseg import MobileV3Large, MobileV3Small
 
 # Construct a new model with pretrained weights, in evaluation mode
 model = MobileV3Large.from_pretrained().cuda()
 model.eval()
 
-# Run inference directly
-dummy_input = torch.randn(1, 3, 224, 224)
-dummy_output = model(dummy_input)
-assert dummy_output.shape == (1, 19, 224, 224)
-
 # Run inference on an image
-from PIL import Image
 img = Image.open('city_1.png')
-labels = model.predict_one(img)
-assert labels.shape == (224, 224) # returns a NumPy array containing integer labels
+labels = model.predict_one(img) # returns a NumPy array containing integer labels
+assert labels.shape == (224, 224)
 
 # Run inference on a batch of images
 img2 = Image.open('city_2.png')
-batch_labels = model.predict([img, img2])
-assert batch_labels.shape == (2, 224, 224) # returns a NumPy array containing integer labels
+batch_labels = model.predict([img, img2]) # returns a NumPy array containing integer labels
+assert batch_labels.shape == (2, 224, 224)
+
+# Run inference directly
+dummy_input = torch.randn(1, 3, 224, 224, device='cuda')
+with torch.no_grad():
+    dummy_output = model(dummy_input)
+assert dummy_output.shape == (1, 19, 224, 224)
 ```
 
 In addition, you can generate colorized and composited versions of the label masks as human-interpretable images.
