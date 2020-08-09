@@ -1,6 +1,6 @@
 # Fast Semantic Segmentation
 
-This respository aims to provide accurate _real-time semantic segmentation_ code for mobile devices, with pretrained weights on Cityscapes. This can be used for efficient segmentation on a variety of real-world street images, including other datasets like Mapillary Vistas, KITTI, and CamVid.
+This respository aims to provide accurate _real-time semantic segmentation_ code for mobile devices in PyTorch, with pretrained weights on Cityscapes. This can be used for efficient segmentation on a variety of real-world street images, including datasets like Mapillary Vistas, KITTI, and CamVid.
 
 ```python
 from fastseg import MobileV3Large
@@ -74,21 +74,23 @@ image = Image.open('street_image.png')
 labels = model.predict_one(image)
 ```
 
+![Example image segmentation](https://i.imgur.com/WspmlwN.jpg)
+
 More detailed examples are given below. As an alternative, instead of installing `fastseg` from pip, you can clone this repository and install the `geffnet` package (along with other dependencies) by running `pip install -r requirements.txt` in the project root.
 
 ## Pretrained Models and Metrics
 
 I was able to train a few models close to or exceeding the accuracy described in the original [Searching for MobileNetV3](https://arxiv.org/abs/1905.02244) paper. Each was trained only on the `gtFine` labels from Cityscapes for around 12 hours on an Nvidia DGX-1 node, with 8 V100 GPUs.
 
-| Model           | Segmentation Head | Parameters | mIOU  | Inference | Weights? |
-| --------------- | ----------------- | ---------- | ----- | --------- | :------: |
-| `MobileV3Large` | LR-ASPP, F=256    | 3.6M       | 72.3% | 21.1 FPS  |    ✔     |
-| `MobileV3Large` | LR-ASPP, F=128    | 3.2M       | 68.1% | 25.7 FPS  |          |
-| `MobileV3Small` | LR-ASPP, F=256    | 1.4M       | 66.5% | 30.3 FPS  |    ✔     |
+| Model           | Segmentation Head | Parameters | mIOU  | Inference | TensorRT | Weights? |
+| --------------- | ----------------- | ---------- | ----- | --------- | -------- | :------: |
+| `MobileV3Large` | LR-ASPP, F=256    | 3.6M       | 72.3% | 21.1 FPS  | 30.7 FPS |    ✔     |
+| `MobileV3Large` | LR-ASPP, F=128    | 3.2M       | 68.1% | 25.7 FPS  | --       |          |
+| `MobileV3Small` | LR-ASPP, F=256    | 1.4M       | 66.5% | 30.3 FPS  | --       |    ✔     |
 
-For comparison, this is within 0.3% of the original paper, which reports 72.6% mIOU and 3.6M parameters on the Cityscapes _val_ set. Inference was done on a single Nvidia V100 GPU with 16-bit floating point precision, tested on full-resolution 2MP images (1024 x 2048) from Cityscapes as input. It is much faster with half-resolution (512 x 1024) images.
+For comparison, this is within 0.3% of the original paper, which reports 72.6% mIOU and 3.6M parameters on the Cityscapes _val_ set. Inference was done on an Nvidia V100 GPU, tested on full-resolution 2MP images (1024 x 2048) from Cityscapes as input. It runs much faster on half-resolution (512 x 1024) images.
 
-TODO: Get inference times with TensorRT/ONNX. I expect these to be significantly faster.
+The "TensorRT" column shows some benchmarks I ran while experimenting with exporting models to [Nvidia TensorRT](https://developer.nvidia.com/tensorrt). You might be able to get faster inference if you're knowledgeable about this.
 
 ## Usage
 
@@ -209,6 +211,8 @@ optional arguments:
                         filename of the weights checkpoint .pth file (uses
                         pretrained by default)
 ```
+
+We also provide an `onnx_optimize.py` script for optimizing exported models.
 
 ## Training from Scratch
 

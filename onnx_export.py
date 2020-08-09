@@ -48,8 +48,9 @@ output_names = ['output0']
 # Run model once, this is required by geffnet
 model(dummy_input)
 
-torch.onnx.export(model, dummy_input, args.output, verbose=True, opset_version=11,
-    input_names=input_names, output_names=output_names)
+torch.onnx.export(model, dummy_input, args.output, verbose=True,
+    input_names=input_names, output_names=output_names,
+    opset_version=11, keep_initializers_as_inputs=True)
 
 # Check the model
 print(f'==> Finished export, loading and checking model: {args.output}')
