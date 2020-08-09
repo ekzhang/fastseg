@@ -15,6 +15,19 @@ Currently, you can do the following:
 
 If you have any feature requests or questions, feel free to leave them as GitHub issues!
 
+## Table of Contents
+
+  * [What's New?](#whats-new)
+    + [August X, 2020](#august-x-2020)
+  * [About MobileNetV3](#about-mobilenetv3)
+  * [Requirements](#requirements)
+  * [Pretrained Models and Metrics](#pretrained-models-and-metrics)
+  * [Usage](#usage)
+    + [Example: Running Inference](#example-running-inference)
+    + [Example: Exporting to ONNX](#example-exporting-to-onnx)
+  * [Training from Scratch](#training-from-scratch)
+  * [Contributions](#contributions)
+
 ## What's New?
 
 ### August X, 2020
@@ -75,9 +88,11 @@ For comparison, the original paper reports 72.6% mIOU and 3.6M parameters on the
 
 TODO: Get inference times with TensorRT/ONNX. I expect these to be significantly faster.
 
-## Example: Running Inference
+## Usage
 
-The easiest way to get started with inference is to clone this repository and use the `infer.py` script. For example, if you have street images named `city_1.png` and `city_2.png`, then you can easily generate segmentation labels with the command:
+### Example: Running Inference
+
+The easiest way to get started with inference is to clone this repository and use the `infer.py` script. For example, if you have street images named `city_1.png` and `city_2.png`, then you can generate segmentation labels for them with the following command.
 
 ```shell
 $ python infer.py city_1.png city_2.png
@@ -92,7 +107,7 @@ Generated colorized_city_1.png
 Generated composited_city_2.png
 ```
 
-To interact with the code programmatically, first install the `fastseg` package with pip, as described above. Then, you can import and construct the models in your own Python code, which are normal PyTorch instances of `nn.Module`.
+To interact with the models programmatically, first install the `fastseg` package with pip, as described above. Then, you can import and construct the models in your own Python code, which are normal instances of PyTorch `nn.Module`.
 
 ```python
 from fastseg import MobileV3Large, MobileV3Small
@@ -112,7 +127,7 @@ model = MobileV3Large(
 )
 ```
 
-You can run raw inference in your own pipeline with `model.forward()`, like any other PyTorch model. However, we also provide convenience functions `model.predict_one()` and `model.predict()`, which run preprocessing and normalization on a PIL image in addition to inference.
+You can run raw inference in your own pipeline with `model.forward()`, like any other PyTorch model. However, we also provide convenience functions `model.predict_one()` and `model.predict()`, which run preprocessing and normalization on PIL images directly and return labels.
 
 ```python
 import torch
@@ -139,7 +154,7 @@ batch_labels = model.predict([img, img2])
 assert batch_labels.shape == (2, 224, 224) # returns a NumPy array containing integer labels
 ```
 
-We also provide utilities that generate the colorized and composited versions of the label masks as human-interpretable images.
+In addition, you can generate colorized and composited versions of the label masks as human-interpretable images.
 
 ```python
 from fastseg.image import colorize, blend
@@ -151,11 +166,11 @@ composited = blend(img, colorized) # returns a PIL Image
 composited.show()
 ```
 
-You can see an example of this in action by clicking the "Open in Colab" button below.
+You can see an example of this in action by pressing the "Open in Colab" button below.
 
 TODO "Open in Colab" button & notebook.
 
-## Example: Exporting to ONNX
+### Example: Exporting to ONNX
 
 The script `onnx_export.py` can be used to convert a pretrained segmentation model to ONNX. You should specify the image input dimensions when exporting. See the usage instructions below:
 
