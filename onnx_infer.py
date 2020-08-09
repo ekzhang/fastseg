@@ -1,16 +1,26 @@
-"""Inference test with ONNX."""
+"""Script to test inference of an exported ONNX model."""
 
-import onnxruntime
+import argparse
 
 import numpy as np
+import onnxruntime
 import torch
-from torchvision import transforms
 
+from torchvision import transforms
 from PIL import Image
 
 from fastseg.image import colorize, blend
 
-im_path = 'c:/Users/ericzhang/Downloads/cityscapes/leftImg8bit/val/frankfurt/frankfurt_000001_030669_leftImg8bit.png'
+parser = argparse.ArgumentParser(description=__doc__)
+
+parser.add_argument('model', metavar='MODEL',
+    help='filename of onnx model (e.g., mobilenetv3_large.onnx)')
+parser.add_argument('image', metavar='IMAGE',
+    help='filename of image to run inference on')
+
+args = parser.parse_args()
+
+im_path = args.image
 img = Image.open(im_path)
 
 tfms = transforms.Compose([
@@ -19,7 +29,7 @@ tfms = transforms.Compose([
 ])
 ipt = torch.stack([tfms(img)]).numpy()
 
-sess = onnxruntime.InferenceSession('mobilenetv3.onnx')
+sess = onnxruntime.InferenceSession(args.model)
 
 out_ort = sess.run(None, {
     'input0': ipt,

@@ -1,4 +1,6 @@
 geffnet==0.9.8
+onnx==1.7.0
+onnxruntime==1.4.0
 Pillow==7.2.0
 numpy>=1.18.0
 torch>=1.5.0
