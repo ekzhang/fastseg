@@ -82,9 +82,11 @@ class MobileNetV3_Small(nn.Module):
                 else:
                     m.dilation = (4, 4)
                     pad = 4
+                # Adjust padding if necessary, but NOT for "same" layers
                 assert m.kernel_size[0] == m.kernel_size[1]
-                pad *= (m.kernel_size[0] - 1) // 2
-                m.padding = (pad, pad)
+                if not isinstance(m, Conv2dSame) and not isinstance(m, Conv2dSameExport):
+                    pad *= (m.kernel_size[0] - 1) // 2
+                    m.padding = (pad, pad)
 
         self.block0 = net.blocks[0]
         self.block1 = net.blocks[1]
