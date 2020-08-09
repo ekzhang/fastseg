@@ -4,6 +4,7 @@ import torch
 import torch.nn as nn
 from torchvision import transforms
 
+# TODO(ekzhang): move to hashed weights from GitHub releases
 MODEL_WEIGHTS_URL = {
     'mobilev3large-lraspp': 'https://www.dropbox.com/s/fgsv5bknwnn7mdj/mobilev3large-lraspp.pth?dl=1',
     'mobilev3small-lraspp': 'https://www.dropbox.com/s/rf19yi0svmwu0z5/mobilev3small-lraspp.pth?dl=1',

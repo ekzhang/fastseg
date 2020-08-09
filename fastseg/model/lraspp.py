@@ -79,6 +79,7 @@ class LRASPP(BaseSegmentation):
         self.last = nn.Conv2d(hidden_ch, num_classes, kernel_size=1)
 
     def forward(self, x):
+        # TODO(ekzhang): make sure this works for images that are not divisible by 8
         s2, s4, final = self.trunk(x)
         if self.use_aspp:
             aspp = torch.cat([

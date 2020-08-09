@@ -2,7 +2,14 @@
 
 This respository aims to provide accurate _real-time semantic segmentation_ code for mobile devices, with pretrained weights on Cityscapes. This can be used for efficient segmentation on a variety of real-world street images, including other datasets like Mapillary Vistas, KITTI, and CamVid.
 
-![Example image segmentation](https://i.imgur.com/WspmlwN.jpg)
+```python
+from fastseg import MobileV3Large
+model = MobileV3Large.from_pretrained().cuda().eval()
+
+model.predict(images)
+```
+
+![Example image segmentation video](https://i.imgur.com/vOApT8N.gif)
 
 The models are implementations of **MobileNetV3** (both large and small variants) with a modified segmentation head based on **LR-ASPP**. The top model was able to achieve **72.3%** mIOU on Cityscapes _val_, while running at up to **60 FPS** on a GPU. Please see below for detailed benchmarks.
 
@@ -104,6 +111,11 @@ Loading city_2.png
 Generated colorized_city_2.png
 Generated composited_city_2.png
 ```
+
+|               Original               |              Colorized               |              Composited              |
+| :----------------------------------: | :----------------------------------: | :----------------------------------: |
+| ![](https://i.imgur.com/74vqz0q.png) | ![](https://i.imgur.com/HRr16YC.png) | ![](https://i.imgur.com/WVd5a6Z.png) |
+| ![](https://i.imgur.com/MJA7VMN.png) | ![](https://i.imgur.com/FqoxHzR.png) | ![](https://i.imgur.com/fVMvbRv.png) |
 
 To interact with the models programmatically, first install the `fastseg` package with pip, as described above. Then, you can import and construct the models in your own Python code, which are normal instances of PyTorch `nn.Module`.
 
