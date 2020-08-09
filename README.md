@@ -104,6 +104,9 @@ Output:
 ==> Loading images and running inference
 Loading city_1.png
 Generated colorized_city_1.png
+Generated composited_city_1.png
+Loading city_2.png
+Generated colorized_city_2.png
 Generated composited_city_2.png
 ```
 
