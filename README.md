@@ -1,10 +1,10 @@
 # Fast Semantic Segmentation
 
-This respository aims to provide accurate _real-time semantic segmentation_ code for mobile devices, with pretrained weights on Cityscapes. This can be used for efficient segmentation on a variety of real-world street images, as well as images from other datasets like Mapillary Vistas, KITTI, and CamVid.
+This respository aims to provide accurate _real-time semantic segmentation_ code for mobile devices, with pretrained weights on Cityscapes. This can be used for efficient segmentation on a variety of real-world street images, including other datasets like Mapillary Vistas, KITTI, and CamVid.
 
 ![Example image segmentation](https://i.imgur.com/WspmlwN.jpg)
 
-The models are implementations of **MobileNetV3** (both large and small variants) with a modified segmentation head based on **LR-ASPP**. The top model was able to achieve **71.4%** mIOU on Cityscapes _val_, while running at up to **60 FPS** on a GPU. Please see below for detailed benchmarks.
+The models are implementations of **MobileNetV3** (both large and small variants) with a modified segmentation head based on **LR-ASPP**. The top model was able to achieve **72.3%** mIOU on Cityscapes _val_, while running at up to **60 FPS** on a GPU. Please see below for detailed benchmarks.
 
 Currently, you can do the following:
 
@@ -75,11 +75,11 @@ I was able to train a few models close to or exceeding the accuracy described in
 
 | Model           | Segmentation Head | Parameters | mIOU  | Inference | Weights? |
 | --------------- | ----------------- | ---------- | ----- | --------- | :------: |
-| `MobileV3Large` | LR-ASPP, F=256    | 3.6M       | 71.4% | 21.1 FPS  |    ✔     |
+| `MobileV3Large` | LR-ASPP, F=256    | 3.6M       | 72.3% | 21.1 FPS  |    ✔     |
 | `MobileV3Large` | LR-ASPP, F=128    | 3.2M       | 68.1% | 25.7 FPS  |          |
-| `MobileV3Small` | LR-ASPP, F=256    | 1.4M       | 63.4% | 30.3 FPS  |    ✔     |
+| `MobileV3Small` | LR-ASPP, F=256    | 1.4M       | 66.5% | 30.3 FPS  |    ✔     |
 
-For comparison, the original paper reports 72.6% mIOU and 3.6M parameters on the Cityscapes _val_ set. Inference was done on a single Nvidia V100 GPU with 16-bit floating point precision, tested on full-resolution 2MP images (1024 x 2048) from Cityscapes as input. It is much faster with half-resolution (512 x 1024) images.
+For comparison, this is within 0.3% of the original paper, which reports 72.6% mIOU and 3.6M parameters on the Cityscapes _val_ set. Inference was done on a single Nvidia V100 GPU with 16-bit floating point precision, tested on full-resolution 2MP images (1024 x 2048) from Cityscapes as input. It is much faster with half-resolution (512 x 1024) images.
 
 TODO: Get inference times with TensorRT/ONNX. I expect these to be significantly faster.
 
