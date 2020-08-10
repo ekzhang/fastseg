@@ -1,5 +1,7 @@
 # Fast Semantic Segmentation
 
+[![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/ekzhang/fastseg/blob/master/demo/fastseg-semantic-segmentation.ipynb)
+
 This respository aims to provide accurate _real-time semantic segmentation_ code for mobile devices in PyTorch, with pretrained weights on Cityscapes. This can be used for efficient segmentation on a variety of real-world street images, including datasets like Mapillary Vistas, KITTI, and CamVid.
 
 ```python
@@ -29,8 +31,8 @@ If you have any feature requests or questions, feel free to leave them as GitHub
   * [Requirements](#requirements)
   * [Pretrained Models and Metrics](#pretrained-models-and-metrics)
   * [Usage](#usage)
-    + [Example: Running Inference](#example-running-inference)
-    + [Example: Exporting to ONNX](#example-exporting-to-onnx)
+    + [Running Inference](#running-inference)
+    + [Exporting to ONNX](#exporting-to-onnx)
   * [Training from Scratch](#training-from-scratch)
   * [Contributions](#contributions)
 
@@ -48,8 +50,7 @@ Here's an excerpt from the [original paper](https://arxiv.org/abs/1905.02244) in
 >
 > For the task of semantic segmentation (or any dense pixel prediction), we propose a new efficient segmentation decoder Lite Reduced Atrous Spatial Pyramid Pooling (LR-ASPP). **We achieve new state of the art results for mobile classification, detection and segmentation.**
 >
-> **MobileNetV3-Large LRASPP is 34% faster than MobileNetV2 R-ASPP at similar
-accuracy for Cityscapes segmentation.**
+> **MobileNetV3-Large LRASPP is 34% faster than MobileNetV2 R-ASPP at similar accuracy for Cityscapes segmentation.**
 >
 > ![MobileNetV3 Comparison](https://i.imgur.com/E9IYp0c.png?1)
 
@@ -87,13 +88,13 @@ I was able to train a few models close to or exceeding the accuracy described in
 | `MobileV3Large` | LR-ASPP, F=128    | 3.2M       | 68.1% | 25.7 FPS  | --       |          |
 | `MobileV3Small` | LR-ASPP, F=256    | 1.4M       | 66.5% | 30.3 FPS  | 39.4 FPS |    ✔     |
 
-For comparison, this is within 0.3% of the original paper, which reports 72.6% mIOU and 3.6M parameters on the Cityscapes _val_ set. Inference was done on an Nvidia V100 GPU, tested on full-resolution 2MP images (1024 x 2048) from Cityscapes as input. It runs much faster on half-resolution (512 x 1024) images.
+For comparison, this is within **0.3%** of the original paper, which reported 72.6% mIOU and 3.6M parameters on the Cityscapes _val_ set. Inference was tested on an Nvidia V100 GPU with full-resolution 2MP images (1024 x 2048) from Cityscapes as input. It runs much faster on half-resolution (512 x 1024) images.
 
 The "TensorRT" column shows some benchmarks I ran while experimenting with exporting optimized ONNX models to [Nvidia TensorRT](https://developer.nvidia.com/tensorrt). You might be able to get additional speedups if you're knowledgeable about this.
 
 ## Usage
 
-### Example: Running Inference
+### Running Inference
 
 The easiest way to get started with inference is to clone this repository and use the `infer.py` script. For example, if you have street images named `city_1.png` and `city_2.png`, then you can generate segmentation labels for them with the following command.
 
@@ -168,7 +169,7 @@ with torch.no_grad():
 assert dummy_output.shape == (1, 19, 1024, 2048)
 ```
 
-In addition, you can generate colorized and composited versions of the label masks as human-interpretable images.
+The output labels can be visualized with colorized and composited images.
 
 ```python
 from fastseg.image import colorize, blend
@@ -180,13 +181,9 @@ composited = blend(img, colorized) # returns a PIL Image
 composited.show()
 ```
 
-You can see an example of this in action by pressing the "Open in Colab" button below.
+### Exporting to ONNX
 
-TODO "Open in Colab" button & notebook.
-
-### Example: Exporting to ONNX
-
-The script `onnx_export.py` can be used to convert a pretrained segmentation model to ONNX. You should specify the image input dimensions when exporting. See the usage instructions below:
+The `onnx_export.py` script can be used to convert a pretrained segmentation model to ONNX. You should specify the image input dimensions when exporting. See the usage instructions below:
 
 ```
 $ python onnx_export.py --help

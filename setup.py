@@ -8,7 +8,7 @@ README = (HERE / "README.md").read_text()
 
 setup(
     name="fastseg",
-    version="0.0.0",
+    version="0.0.1",
     description="Fast Semantic Segmentation for PyTorch",
     long_description=README,
     long_description_content_type="text/markdown",
