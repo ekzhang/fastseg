@@ -21,11 +21,11 @@ class BaseSegmentation(nn.Module):
             name = cls.model_name
             if name in MODEL_WEIGHTS_URL:
                 weights_url = MODEL_WEIGHTS_URL[name]
-                checkpoint = torch.hub.load_state_dict_from_url(weights_url)
+                checkpoint = torch.hub.load_state_dict_from_url(weights_url, map_location='cpu')
             else:
                 raise ValueError(f'pretrained weights not found for model {name}, please specify a checkpoint')
         else:
-            checkpoint = torch.load(filename)
+            checkpoint = torch.load(filename, map_location='cpu')
         net = cls(checkpoint['num_classes'], **kwargs)
         net.load_checkpoint(checkpoint)
         return net
