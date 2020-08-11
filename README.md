@@ -58,7 +58,7 @@ This project tries to faithfully implement MobileNetV3 for real-time semantic se
 
 ## Requirements
 
-This code requires Python 3.7 or later. It is tested with PyTorch version 1.5 and above. To install the package, simply run `pip install fastseg`. Then you can get started with a pretrained model:
+This code requires Python 3.7 or later. It has been tested to work with PyTorch version 1.6. To install the package, simply run `pip install fastseg`. Then you can get started with a pretrained model:
 
 ```python
 # Load a pretrained MobileNetV3 segmentation model in inference mode

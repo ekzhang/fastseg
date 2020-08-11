@@ -33,7 +33,7 @@ setup(
         "geffnet >= 0.9.8",
         "Pillow >= 7.0.0",
         "numpy >= 1.18.0",
-        "torch >= 1.5.0",
+        "torch >= 1.6.0",
         "torchvision >= 0.6.0",
     ],
 )
