@@ -4,13 +4,11 @@ import torch
 import torch.nn as nn
 from torchvision import transforms
 
-# TODO(ekzhang): move to hashed weights from GitHub releases
 MODEL_WEIGHTS_URL = {
-    ('mobilev3large-lraspp', 256): 'https://www.dropbox.com/s/fgsv5bknwnn7mdj/mobilev3large-lraspp.pth?dl=1',
-    ('mobilev3large-lraspp', 128): None,
-    ('mobilev3small-lraspp', 256): 'https://www.dropbox.com/s/rf19yi0svmwu0z5/mobilev3small-lraspp.pth?dl=1',
-    ('mobilev3small-lraspp', 128): None,
-    ('mobilev3small-lraspp', 64): None,
+    ('mobilev3large-lraspp', 256): 'https://github.com/ekzhang/fastseg/releases/download/v0.1-weights/mobilev3large-lraspp-f256-9b613ffd.pt',
+    ('mobilev3large-lraspp', 128): 'https://github.com/ekzhang/fastseg/releases/download/v0.1-weights/mobilev3large-lraspp-f128-9cbabfde.pt',
+    ('mobilev3small-lraspp', 128): 'https://github.com/ekzhang/fastseg/releases/download/v0.1-weights/mobilev3small-lraspp-f128-a39a1e4b.pt',
+    ('mobilev3small-lraspp', 64): 'https://github.com/ekzhang/fastseg/releases/download/v0.1-weights/mobilev3small-lraspp-f64-114fc23b.pt',
 }
 
 class BaseSegmentation(nn.Module):
