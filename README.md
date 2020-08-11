@@ -86,11 +86,10 @@ I was able to train a few models close to or exceeding the accuracy described in
 | :-------------: | :---------------: | :--------: | :---: | :-------: | :------: | :------: |
 | `MobileV3Large` |  LR-ASPP, F=256   |    3.6M    | 72.3% | 21.1 FPS  | 30.7 FPS |    ✔     |
 | `MobileV3Large` |  LR-ASPP, F=128   |    3.2M    | 72.3% | 25.7 FPS  | 37.3 FPS |    ✔     |
-| `MobileV3Small` |  LR-ASPP, F=256   |    1.4M    | 67.1% | 30.3 FPS  | 39.4 FPS |    ✔     |
-| `MobileV3Small` |  LR-ASPP, F=128   |    1.1M    |  --   | 38.2 FPS  | 52.4 FPS |    ✔     |
-| `MobileV3Small` |   LR-ASPP, F=64   |    1.0M    |  --   | 46.5 FPS  | 61.9 FPS |    ✔     |
+| `MobileV3Small` |  LR-ASPP, F=128   |    1.1M    | 67.4% | 38.2 FPS  | 52.4 FPS |    ✔     |
+| `MobileV3Small` |   LR-ASPP, F=64   |    1.0M    | 66.9% | 46.5 FPS  | 61.9 FPS |    ✔     |
 
-The accuracy is within **0.3%** of the original paper, which reported 72.6% mIoU and 3.6M parameters on the Cityscapes _val_ set. Inference was tested on a single V100 GPU with full-resolution 2MP images (1024 x 2048) from Cityscapes as input. It runs roughly 4x faster on half-resolution (512 x 1024) images.
+The accuracy is within **0.3%** of the original paper, which reported 72.6% mIoU and 3.6M parameters on the Cityscapes _val_ set. Inference was tested on a single V100 GPU with full-resolution 2MP images (1024 x 2048) as input. It runs roughly 4x faster on half-resolution (512 x 1024) images.
 
 The "TensorRT" column shows benchmarks I ran after exporting optimized ONNX models to [Nvidia TensorRT](https://developer.nvidia.com/tensorrt) with fp16 precision. Performance is measured by taking average GPU latency over 100 iterations.
 
