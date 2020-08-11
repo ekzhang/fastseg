@@ -19,6 +19,8 @@ parser.add_argument('images', nargs='*', metavar='IMAGES',
     help='one or more filenames of images to run inference on')
 parser.add_argument('--model', '-m', default='MobileV3Large',
     help='the model to use for inference (default MobileV3Large)')
+parser.add_argument('--num_filters', '-F', type=int, default=128,
+    help='the number of filters in the segmentation head (default 128)')
 parser.add_argument('--checkpoint', '-c', default=None,
     help='filename of the weights checkpoint .pth file (uses pretrained by default)')
 parser.add_argument('--show', '-s', action='store_true',
@@ -39,7 +41,7 @@ else:
     print(f'Unknown model name: {args.model}', file=sys.stderr)
     sys.exit(1)
 
-model = model_cls.from_pretrained(args.checkpoint).cuda().eval()
+model = model_cls.from_pretrained(args.checkpoint, num_filters=args.num_filters).cuda().eval()
 
 print('==> Loading images and running inference')
 

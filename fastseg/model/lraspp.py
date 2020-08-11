@@ -13,11 +13,7 @@ from .base import BaseSegmentation
 
 class LRASPP(BaseSegmentation):
     """Lite R-ASPP style segmentation network."""
-    def __init__(self,
-                 num_classes,
-                 trunk='mobilenetv3_large',
-                 use_aspp=False,
-                 hidden_ch=256):
+    def __init__(self, num_classes, trunk, use_aspp=False, num_filters=128):
         """Initialize a new segmentation model.
 
         Keyword arguments:
@@ -25,7 +21,7 @@ class LRASPP(BaseSegmentation):
         trunk -- the name of the trunk to use ('mobilenetv3_large', 'mobilenetv3_small')
         use_aspp -- whether to use DeepLabV3+ style ASPP (True) or Lite R-ASPP (False)
             (setting this to True may yield better results, at the cost of latency)
-        hidden_ch -- the number of filters in the segmentation head
+        num_filters -- the number of filters in the segmentation head
         """
         super(LRASPP, self).__init__()
 
@@ -35,48 +31,48 @@ class LRASPP(BaseSegmentation):
         # Reduced atrous spatial pyramid pooling
         if self.use_aspp:
             self.aspp_conv1 = nn.Sequential(
-                nn.Conv2d(high_level_ch, hidden_ch, 1, bias=False),
-                nn.BatchNorm2d(hidden_ch),
+                nn.Conv2d(high_level_ch, num_filters, 1, bias=False),
+                nn.BatchNorm2d(num_filters),
                 nn.ReLU(inplace=True),
             )
             self.aspp_conv2 = nn.Sequential(
-                nn.Conv2d(high_level_ch, hidden_ch, 1, bias=False),
-                nn.Conv2d(hidden_ch, hidden_ch, 3, dilation=12, padding=12),
-                nn.BatchNorm2d(hidden_ch),
+                nn.Conv2d(high_level_ch, num_filters, 1, bias=False),
+                nn.Conv2d(num_filters, num_filters, 3, dilation=12, padding=12),
+                nn.BatchNorm2d(num_filters),
                 nn.ReLU(inplace=True),
             )
             self.aspp_conv3 = nn.Sequential(
-                nn.Conv2d(high_level_ch, hidden_ch, 1, bias=False),
-                nn.Conv2d(hidden_ch, hidden_ch, 3, dilation=36, padding=36),
-                nn.BatchNorm2d(hidden_ch),
+                nn.Conv2d(high_level_ch, num_filters, 1, bias=False),
+                nn.Conv2d(num_filters, num_filters, 3, dilation=36, padding=36),
+                nn.BatchNorm2d(num_filters),
                 nn.ReLU(inplace=True),
             )
             self.aspp_pool = nn.Sequential(
                 nn.AdaptiveAvgPool2d(1),
-                nn.Conv2d(high_level_ch, hidden_ch, 1, bias=False),
-                nn.BatchNorm2d(hidden_ch),
+                nn.Conv2d(high_level_ch, num_filters, 1, bias=False),
+                nn.BatchNorm2d(num_filters),
                 nn.ReLU(inplace=True),
             )
-            aspp_out_ch = hidden_ch * 4
+            aspp_out_ch = num_filters * 4
         else:
             self.aspp_conv1 = nn.Sequential(
-                nn.Conv2d(high_level_ch, hidden_ch, 1, bias=False),
-                nn.BatchNorm2d(hidden_ch),
+                nn.Conv2d(high_level_ch, num_filters, 1, bias=False),
+                nn.BatchNorm2d(num_filters),
                 nn.ReLU(inplace=True),
             )
             self.aspp_conv2 = nn.Sequential(
                 nn.AvgPool2d(kernel_size=(49, 49), stride=(16, 20)),
-                nn.Conv2d(high_level_ch, hidden_ch, 1, bias=False),
+                nn.Conv2d(high_level_ch, num_filters, 1, bias=False),
                 nn.Sigmoid(),
             )
-            aspp_out_ch = hidden_ch
+            aspp_out_ch = num_filters
 
         self.convs2 = nn.Conv2d(s2_ch, 32, kernel_size=1, bias=False)
         self.convs4 = nn.Conv2d(s4_ch, 64, kernel_size=1, bias=False)
-        self.conv_up1 = nn.Conv2d(aspp_out_ch, hidden_ch, kernel_size=1)
-        self.conv_up2 = ConvBnRelu(hidden_ch + 64, hidden_ch, kernel_size=1)
-        self.conv_up3 = ConvBnRelu(hidden_ch + 32, hidden_ch, kernel_size=1)
-        self.last = nn.Conv2d(hidden_ch, num_classes, kernel_size=1)
+        self.conv_up1 = nn.Conv2d(aspp_out_ch, num_filters, kernel_size=1)
+        self.conv_up2 = ConvBnRelu(num_filters + 64, num_filters, kernel_size=1)
+        self.conv_up3 = ConvBnRelu(num_filters + 32, num_filters, kernel_size=1)
+        self.last = nn.Conv2d(num_filters, num_classes, kernel_size=1)
 
     def forward(self, x):
         s2, s4, final = self.trunk(x)

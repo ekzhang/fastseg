@@ -6,27 +6,31 @@ from torchvision import transforms
 
 # TODO(ekzhang): move to hashed weights from GitHub releases
 MODEL_WEIGHTS_URL = {
-    'mobilev3large-lraspp': 'https://www.dropbox.com/s/fgsv5bknwnn7mdj/mobilev3large-lraspp.pth?dl=1',
-    'mobilev3small-lraspp': 'https://www.dropbox.com/s/rf19yi0svmwu0z5/mobilev3small-lraspp.pth?dl=1',
+    ('mobilev3large-lraspp', 256): 'https://www.dropbox.com/s/fgsv5bknwnn7mdj/mobilev3large-lraspp.pth?dl=1',
+    ('mobilev3large-lraspp', 128): None,
+    ('mobilev3small-lraspp', 256): 'https://www.dropbox.com/s/rf19yi0svmwu0z5/mobilev3small-lraspp.pth?dl=1',
+    ('mobilev3small-lraspp', 128): None,
+    ('mobilev3small-lraspp', 64): None,
 }
 
 class BaseSegmentation(nn.Module):
     """Module subclass providing useful convenience functions for inference."""
 
     @classmethod
-    def from_pretrained(cls, filename=None, **kwargs):
+    def from_pretrained(cls, filename=None, num_filters=128, **kwargs):
         """Load a pretrained model from a .pth checkpoint given by `filename`."""
         if filename is None:
             # Pull default pretrained model from internet
-            name = cls.model_name
+            name = (cls.model_name, num_filters)
             if name in MODEL_WEIGHTS_URL:
                 weights_url = MODEL_WEIGHTS_URL[name]
+                print(f'Loading pretrained model {name[0]} with F={name[1]}...')
                 checkpoint = torch.hub.load_state_dict_from_url(weights_url, map_location='cpu')
             else:
                 raise ValueError(f'pretrained weights not found for model {name}, please specify a checkpoint')
         else:
             checkpoint = torch.load(filename, map_location='cpu')
-        net = cls(checkpoint['num_classes'], **kwargs)
+        net = cls(checkpoint['num_classes'], num_filters=num_filters, **kwargs)
         net.load_checkpoint(checkpoint)
         return net
 

@@ -12,7 +12,7 @@ model.predict(images)
 
 ![Example image segmentation video](https://i.imgur.com/vOApT8N.gif)
 
-The models are implementations of **MobileNetV3** (both large and small variants) with a modified segmentation head based on **LR-ASPP**. The top model was able to achieve **72.3%** mIOU on Cityscapes _val_, while running at up to **30.7 FPS** on a GPU. Please see below for detailed benchmarks.
+The models are implementations of **MobileNetV3** (both large and small variants) with a modified segmentation head based on **LR-ASPP**. The top model was able to achieve **72.3%** mIOU on Cityscapes _val_, while running at up to **37.3 FPS** on a GPU. Please see below for detailed benchmarks.
 
 Currently, you can do the following:
 
@@ -85,12 +85,14 @@ I was able to train a few models close to or exceeding the accuracy described in
 | Model           | Segmentation Head | Parameters | mIOU  | Inference | TensorRT | Weights? |
 | --------------- | ----------------- | ---------- | ----- | --------- | -------- | :------: |
 | `MobileV3Large` | LR-ASPP, F=256    | 3.6M       | 72.3% | 21.1 FPS  | 30.7 FPS |    ✔     |
-| `MobileV3Large` | LR-ASPP, F=128    | 3.2M       | 68.1% | 25.7 FPS  | --       |          |
-| `MobileV3Small` | LR-ASPP, F=256    | 1.4M       | 66.5% | 30.3 FPS  | 39.4 FPS |    ✔     |
+| `MobileV3Large` | LR-ASPP, F=128    | 3.2M       | 72.3% | 25.7 FPS  | 37.3 FPS |    ✔     |
+| `MobileV3Small` | LR-ASPP, F=256    | 1.4M       | 67.1% | 30.3 FPS  | 39.4 FPS |    ✔     |
+| `MobileV3Small` | LR-ASPP, F=128    | 1.1M       | --    | 38.2 FPS  | 52.4 FPS |    ✔     |
+| `MobileV3Small` | LR-ASPP, F=64     | 1.0M       | --    | 46.5 FPS  | 61.9 FPS |    ✔     |
 
-For comparison, this is within **0.3%** of the original paper, which reported 72.6% mIOU and 3.6M parameters on the Cityscapes _val_ set. Inference was tested on an Nvidia V100 GPU with full-resolution 2MP images (1024 x 2048) from Cityscapes as input. It runs much faster on half-resolution (512 x 1024) images.
+The accuracy is within **0.3%** of the original paper, which reported 72.6% mIOU and 3.6M parameters on the Cityscapes _val_ set. Inference was tested on a single V100 GPU with full-resolution 2MP images (1024 x 2048) from Cityscapes as input. It runs roughly 4x faster on half-resolution (512 x 1024) images.
 
-The "TensorRT" column shows some benchmarks I ran while experimenting with exporting optimized ONNX models to [Nvidia TensorRT](https://developer.nvidia.com/tensorrt). You might be able to get additional speedups if you're knowledgeable about this.
+The "TensorRT" column shows benchmarks I ran after exporting optimized ONNX models to [Nvidia TensorRT](https://developer.nvidia.com/tensorrt) with fp16 precision. Performance is measured by taking average GPU latency over 100 iterations.
 
 ## Usage
 
@@ -131,12 +133,7 @@ model = MobileV3Large.from_pretrained()
 model = MobileV3Small.from_pretrained('path_to_weights.pth')
 
 # Construct a custom model with random initialization
-model = MobileV3Large(
-    num_classes=19,
-    trunk='mobilenetv3_large',
-    use_aspp=False,
-    hidden_ch=256,
-)
+model = MobileV3Large(num_classes=19, use_aspp=False, num_filters=256)
 ```
 
 To run inference on an image or batch of images, you can use the methods `model.predict_one()` and `model.predict()`, respectively. These methods take care of the preprocessing and output interpretation for you; they take PIL Images or NumPy arrays as input and return a NumPy array.
@@ -208,7 +205,7 @@ optional arguments:
                         pretrained by default)
 ```
 
-We also provide an `onnx_optimize.py` script for optimizing exported models.
+We also provide the `onnx_optimize.py` script for optimizing exported models. If you're looking to deploy a model to TensorRT or a mobile device, you might also want to run it through [onnx-simplifier](https://github.com/daquexian/onnx-simplifier).
 
 ## Training from Scratch
 
@@ -218,6 +215,6 @@ Coming soon!
 
 Pull requests are always welcome! A big thanks to Andrew Tao and Karan Sapra from [NVIDIA ADLR](https://nv-adlr.github.io/) for helpful discussions and for lending me their training code, as well as Branislav Kisacanin, without whom this wouldn't be possible.
 
-Improved by advice from: Ching Hung, Eric Viscito, Franklyn Wang, Jagadeesh Sankaran, and Zoran Nikolic.
+I'm grateful for advice from: Ching Hung, Eric Viscito, Franklyn Wang, Jagadeesh Sankaran, and Zoran Nikolic.
 
 Licensed under the MIT License.

@@ -13,6 +13,8 @@ parser.add_argument('output', metavar='OUTPUT_FILENAME',
     help='filename of output model (e.g., mobilenetv3_large.onnx)')
 parser.add_argument('--model', '-m', default='MobileV3Large',
     help='the model to export (default MobileV3Large)')
+parser.add_argument('--num_filters', '-F', type=int, default=128,
+    help='the number of filters in the segmentation head (default 128)')
 parser.add_argument('--size', '-s', default='1024,2048',
     help='the image dimensions to set as input (default 1024,2048)')
 parser.add_argument('--checkpoint', '-c', default=None,
@@ -30,10 +32,7 @@ else:
     sys.exit(1)
 
 geffnet.config.set_exportable(True)
-if args.checkpoint:
-    model = model_cls.from_pretrained(args.checkpoint)
-else:
-    model = model_cls.from_pretrained()
+model = model_cls.from_pretrained(args.checkpoint, num_filters=args.num_filters)
 model.eval()
 
 print('==> Exporting to ONNX')
