@@ -12,7 +12,7 @@ model.predict(images)
 
 ![Example image segmentation video](https://i.imgur.com/vOApT8N.gif)
 
-The models are implementations of **MobileNetV3** (both large and small variants) with a modified segmentation head based on **LR-ASPP**. The top model was able to achieve **72.3%** mIOU on Cityscapes _val_, while running at up to **37.3 FPS** on a GPU. Please see below for detailed benchmarks.
+The models are implementations of **MobileNetV3** (both large and small variants) with a modified segmentation head based on **LR-ASPP**. The top model was able to achieve **72.3%** mIoU accuracy on Cityscapes _val_, while running at up to **37.3 FPS** on a GPU. Please see below for detailed benchmarks.
 
 Currently, you can do the following:
 
@@ -54,7 +54,7 @@ Here's an excerpt from the [original paper](https://arxiv.org/abs/1905.02244) in
 >
 > ![MobileNetV3 Comparison](https://i.imgur.com/E9IYp0c.png?1)
 
-This project tries to faithfully implement MobileNetV3 for real-time semantic segmentation, with the aims of being efficient, easy to use, and extendable.
+This project tries to faithfully implement MobileNetV3 for real-time semantic segmentation, with the aims of being efficient, easy to use, and extensible.
 
 ## Requirements
 
@@ -82,15 +82,15 @@ More detailed examples are given below. As an alternative, instead of installing
 
 I was able to train a few models close to or exceeding the accuracy described in the original [Searching for MobileNetV3](https://arxiv.org/abs/1905.02244) paper. Each was trained only on the `gtFine` labels from Cityscapes for around 12 hours on an Nvidia DGX-1 node, with 8 V100 GPUs.
 
-| Model           | Segmentation Head | Parameters | mIOU  | Inference | TensorRT | Weights? |
-| --------------- | ----------------- | ---------- | ----- | --------- | -------- | :------: |
-| `MobileV3Large` | LR-ASPP, F=256    | 3.6M       | 72.3% | 21.1 FPS  | 30.7 FPS |    ✔     |
-| `MobileV3Large` | LR-ASPP, F=128    | 3.2M       | 72.3% | 25.7 FPS  | 37.3 FPS |    ✔     |
-| `MobileV3Small` | LR-ASPP, F=256    | 1.4M       | 67.1% | 30.3 FPS  | 39.4 FPS |    ✔     |
-| `MobileV3Small` | LR-ASPP, F=128    | 1.1M       | --    | 38.2 FPS  | 52.4 FPS |    ✔     |
-| `MobileV3Small` | LR-ASPP, F=64     | 1.0M       | --    | 46.5 FPS  | 61.9 FPS |    ✔     |
+|      Model      | Segmentation Head | Parameters | mIoU  | Inference | TensorRT | Weights? |
+| :-------------: | :---------------: | :--------: | :---: | :-------: | :------: | :------: |
+| `MobileV3Large` |  LR-ASPP, F=256   |    3.6M    | 72.3% | 21.1 FPS  | 30.7 FPS |    ✔     |
+| `MobileV3Large` |  LR-ASPP, F=128   |    3.2M    | 72.3% | 25.7 FPS  | 37.3 FPS |    ✔     |
+| `MobileV3Small` |  LR-ASPP, F=256   |    1.4M    | 67.1% | 30.3 FPS  | 39.4 FPS |    ✔     |
+| `MobileV3Small` |  LR-ASPP, F=128   |    1.1M    |  --   | 38.2 FPS  | 52.4 FPS |    ✔     |
+| `MobileV3Small` |   LR-ASPP, F=64   |    1.0M    |  --   | 46.5 FPS  | 61.9 FPS |    ✔     |
 
-The accuracy is within **0.3%** of the original paper, which reported 72.6% mIOU and 3.6M parameters on the Cityscapes _val_ set. Inference was tested on a single V100 GPU with full-resolution 2MP images (1024 x 2048) from Cityscapes as input. It runs roughly 4x faster on half-resolution (512 x 1024) images.
+The accuracy is within **0.3%** of the original paper, which reported 72.6% mIoU and 3.6M parameters on the Cityscapes _val_ set. Inference was tested on a single V100 GPU with full-resolution 2MP images (1024 x 2048) from Cityscapes as input. It runs roughly 4x faster on half-resolution (512 x 1024) images.
 
 The "TensorRT" column shows benchmarks I ran after exporting optimized ONNX models to [Nvidia TensorRT](https://developer.nvidia.com/tensorrt) with fp16 precision. Performance is measured by taking average GPU latency over 100 iterations.
 
@@ -121,18 +121,18 @@ Generated composited_city_2.png
 | ![](https://i.imgur.com/74vqz0q.png) | ![](https://i.imgur.com/HRr16YC.png) | ![](https://i.imgur.com/WVd5a6Z.png) |
 | ![](https://i.imgur.com/MJA7VMN.png) | ![](https://i.imgur.com/FqoxHzR.png) | ![](https://i.imgur.com/fVMvbRv.png) |
 
-To interact with the models programmatically, first install the `fastseg` package with pip, as described above. Then, you can import and construct the models in your own Python code, which are normal instances of PyTorch `nn.Module`.
+To interact with the models programmatically, first install the `fastseg` package with pip, as described above. Then, you can import and construct models in your own Python code, which are instances of PyTorch `nn.Module`.
 
 ```python
 from fastseg import MobileV3Large, MobileV3Small
 
-# Construct a new model with pretrained weights
+# Load a pretrained segmentation model
 model = MobileV3Large.from_pretrained()
 
-# Construct a new model from a local .pth checkpoint
-model = MobileV3Small.from_pretrained('path_to_weights.pth')
+# Load a segmentation model from a local checkpoint
+model = MobileV3Small.from_pretrained('path/to/weights.pt')
 
-# Construct a custom model with random initialization
+# Create a custom model with random initialization
 model = MobileV3Large(num_classes=19, use_aspp=False, num_filters=256)
 ```
 
@@ -184,8 +184,8 @@ The `onnx_export.py` script can be used to convert a pretrained segmentation mod
 
 ```
 $ python onnx_export.py --help
-usage: onnx_export.py [-h] [--model MODEL] [--size SIZE]
-                      [--checkpoint CHECKPOINT]
+usage: onnx_export.py [-h] [--model MODEL] [--num_filters NUM_FILTERS]
+                      [--size SIZE] [--checkpoint CHECKPOINT]
                       OUTPUT_FILENAME
 
 Command line script to export a pretrained segmentation model to ONNX.
@@ -198,6 +198,9 @@ optional arguments:
   -h, --help            show this help message and exit
   --model MODEL, -m MODEL
                         the model to export (default MobileV3Large)
+  --num_filters NUM_FILTERS, -F NUM_FILTERS
+                        the number of filters in the segmentation head
+                        (default 128)
   --size SIZE, -s SIZE  the image dimensions to set as input (default
                         1024,2048)
   --checkpoint CHECKPOINT, -c CHECKPOINT
@@ -205,7 +208,7 @@ optional arguments:
                         pretrained by default)
 ```
 
-We also provide the `onnx_optimize.py` script for optimizing exported models. If you're looking to deploy a model to TensorRT or a mobile device, you might also want to run it through [onnx-simplifier](https://github.com/daquexian/onnx-simplifier).
+The `onnx_optimize.py` script optimizes exported models. If you're looking to deploy a model to TensorRT or a mobile device, you might also want to run it through [onnx-simplifier](https://github.com/daquexian/onnx-simplifier).
 
 ## Training from Scratch
 
