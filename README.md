@@ -26,6 +26,7 @@ If you have any feature requests or questions, feel free to leave them as GitHub
 ## Table of Contents
 
   * [What's New?](#whats-new)
+    + [August 12th, 2020](#august-12th-2020)
     + [August 11th, 2020](#august-11th-2020)
   * [Overview](#overview)
   * [Requirements](#requirements)
@@ -38,9 +39,16 @@ If you have any feature requests or questions, feel free to leave them as GitHub
 
 ## What's New?
 
+### August 12th, 2020
+
+- Added pretrained weights for `MobileV3Small` with 256 filters
+
 ### August 11th, 2020
 
 - Initial release
+- Implementations of `MobileV3Large` and `MobileV3Small` with LR-ASPP
+- Pretrained weights for `MobileV3Large` with 128/256 filters, and `MobileV3Small` with 64/128 filters
+- Inference, ONNX export, and optimization scripts
 
 ## Overview
 
@@ -86,6 +94,7 @@ I was able to train a few models close to or exceeding the accuracy described in
 | :-------------: | :---------------: | :--------: | :---: | :-------: | :------: | :------: |
 | `MobileV3Large` |  LR-ASPP, F=256   |    3.6M    | 72.3% | 21.1 FPS  | 30.7 FPS |    ✔     |
 | `MobileV3Large` |  LR-ASPP, F=128   |    3.2M    | 72.3% | 25.7 FPS  | 37.3 FPS |    ✔     |
+| `MobileV3Small` |  LR-ASPP, F=256   |    1.4M    | 67.8% | 30.3 FPS  | 39.4 FPS |    ✔     |
 | `MobileV3Small` |  LR-ASPP, F=128   |    1.1M    | 67.4% | 38.2 FPS  | 52.4 FPS |    ✔     |
 | `MobileV3Small` |   LR-ASPP, F=64   |    1.0M    | 66.9% | 46.5 FPS  | 61.9 FPS |    ✔     |
 
