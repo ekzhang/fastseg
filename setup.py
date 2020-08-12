@@ -8,16 +8,16 @@ README = (HERE / "README.md").read_text()
 
 setup(
     name="fastseg",
-    version="0.0.1",
+    version="0.1.0",
     description="Fast Semantic Segmentation for PyTorch",
     long_description=README,
     long_description_content_type="text/markdown",
     url="https://github.com/ekzhang/fast-semantic-seg",
     author="Eric Zhang",
-    author_email="ekzhang1@rgmail.com",
+    author_email="ekzhang1@gmail.com",
     license="MIT",
     classifiers=[
-        "Development Status :: 3 - Alpha",
+        "Development Status :: 4 - Beta",
         "Intended Audience :: Science/Research",
         "License :: OSI Approved :: MIT License",
         "Programming Language :: Python :: 3",
@@ -33,7 +33,7 @@ setup(
         "geffnet >= 0.9.8",
         "Pillow >= 7.0.0",
         "numpy >= 1.18.0",
-        "torch >= 1.6.0",
+        "torch >= 1.5.0",
         "torchvision >= 0.6.0",
     ],
 )
