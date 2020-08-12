@@ -26,7 +26,7 @@ If you have any feature requests or questions, feel free to leave them as GitHub
 ## Table of Contents
 
   * [What's New?](#whats-new)
-    + [August X, 2020](#august-x-2020)
+    + [August 11th, 2020](#august-11th-2020)
   * [Overview](#overview)
   * [Requirements](#requirements)
   * [Pretrained Models and Metrics](#pretrained-models-and-metrics)
@@ -38,7 +38,7 @@ If you have any feature requests or questions, feel free to leave them as GitHub
 
 ## What's New?
 
-### August X, 2020
+### August 11th, 2020
 
 - Initial release
 
