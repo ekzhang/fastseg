@@ -84,7 +84,7 @@ labels = model.predict_one(image)
 
 ![Example image segmentation](https://i.imgur.com/WspmlwN.jpg)
 
-More detailed examples are given below. As an alternative, instead of installing `fastseg` from pip, you can clone this repository and install the `geffnet` package (along with other dependencies) by running `pip install -r requirements.txt` in the project root.
+More detailed examples are given below. As an alternative, instead of installing `fastseg` from pip, you can clone this repository and install the [`geffnet` package](https://github.com/rwightman/gen-efficientnet-pytorch) (along with other dependencies) by running `pip install -r requirements.txt` in the project root.
 
 ## Pretrained Models and Metrics
 
