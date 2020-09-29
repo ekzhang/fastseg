@@ -26,6 +26,7 @@ If you have any feature requests or questions, feel free to leave them as GitHub
 ## Table of Contents
 
   * [What's New?](#whats-new)
+    + [September 29th, 2020](#september-29th-2020)
     + [August 12th, 2020](#august-12th-2020)
     + [August 11th, 2020](#august-11th-2020)
   * [Overview](#overview)
