@@ -39,6 +39,10 @@ If you have any feature requests or questions, feel free to leave them as GitHub
 
 ## What's New?
 
+### September 29th, 2020
+
+- Released [training code](https://github.com/ekzhang/semantic-segmentation) for semantic segmentation models
+
 ### August 12th, 2020
 
 - Added pretrained weights for `MobileV3Small` with 256 filters
@@ -220,7 +224,7 @@ The `onnx_optimize.py` script optimizes exported models. If you're looking to de
 
 ## Training from Scratch
 
-Coming soon!
+Please see the [ekzhang/semantic-segmentation](https://github.com/ekzhang/semantic-segmentation) repository for the training code used in this project, as well as documentation about how to train your own custom models.
 
 ## Contributions
 
